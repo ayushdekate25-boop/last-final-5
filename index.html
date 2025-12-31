@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For You 💖</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#fff1f5,#ffe4ec);
+    overflow:hidden;
+}
+
+/* FLOATING HEARTS */
+.hearts{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+}
+.heart{
+    position:absolute;
+    width:14px;
+    height:14px;
+    background:rgba(255,105,180,.35);
+    transform:rotate(45deg);
+    animation:float 12s linear infinite;
+}
+.heart:before,.heart:after{
+    content:"";
+    position:absolute;
+    width:14px;
+    height:14px;
+    background:rgba(255,105,180,.35);
+    border-radius:50%;
+}
+.heart:before{top:-7px}
+.heart:after{left:-7px}
+@keyframes float{
+    from{transform:translateY(100vh) rotate(45deg);opacity:0}
+    20%{opacity:1}
+    to{transform:translateY(-120vh) rotate(45deg);opacity:0}
+}
+
+/* MAIN CARD */
+.container{
+    width:90vw;
+    max-width:420px;
+    height:85vh;
+    max-height:720px;
+    background:#ffffffcc;
+    border-radius:25px;
+    padding:20px;
+    box-shadow:0 12px 35px rgba(255,182,193,.5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+.screen{display:none;width:100%}
+.screen.active{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.cat{width:170px;margin-bottom:15px}
+.gift,.crystal{width:150px;cursor:pointer;transition:.3s}
+.gift:hover,.crystal:hover{transform:scale(1.1)}
+
+button{
+    background:white;
+    border:2px solid #ff9dbb;
+    color:#ff5f9e;
+    border-radius:25px;
+    padding:10px 25px;
+    margin-top:15px;
+    font-size:15px;
+    cursor:pointer;
+}
+button:hover{background:#ffe6ee}
+
+/* LETTER CARD */
+.letter-card{
+    background:linear-gradient(135deg,#2b1055,#4b2b7f);
+    color:white;
+    padding:25px 20px;
+    border-radius:25px;
+    box-shadow:0 0 25px rgba(255,215,0,.25);
+}
+.letter-card h2{
+    margin-top:0;
+    font-size:24px;
+}
+.letter-card p{
+    line-height:1.7;
+    font-size:15px;
+}
+.signature{
+    margin-top:15px;
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* FIREWORKS */
+#fireworks{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    display:none;
+    z-index:1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts"></div>
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+
+<!-- SCREEN 1 -->
+<div class="screen active" id="s1">
+    <img src="/images/1.jpg" class="cat">
+    <p>hey! i made something for you 💖<br>will you see it?</p>
+    <button onclick="yesClick()">yes</button>
+    <button onclick="noClick()">no</button>
+</div>
+
+<!-- HOW DARE -->
+<div class="screen" id="howDare">
+    <img src="/images/2.jpeg" class="cat">
+    <h2>HOW DARE YOU 😤</h2>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="s2">
+    <img src="/images/3.jpeg" class="cat">
+    <p>okay okay 😼</p>
+    <button onclick="go('s3')">continue</button>
+</div>
+
+<!-- CRYSTAL -->
+<div class="screen" id="s3">
+    <p>Touch the crystal 🔮</p>
+    <img src="https://img.freepik.com/premium-vector/halloween-witch-magic-ball-magical_689894-10.jpg"
+         class="crystal" onclick="go('s4')">
+</div>
+
+<!-- GALLERY -->
+<div class="screen" id="s4">
+    <img src="/images/5.jpeg" width="300" height="450">
+    <p>these reminded me of you 🐱💖</p>
+    <button onclick="go('s5')">next 💫</button>
+</div>
+
+<!-- GIFT -->
+<div class="screen" id="s5">
+    <img src="https://i.pinimg.com/originals/32/4f/3e/324f3ee83dbde2c4fc1d30830352f25a.png"
+         class="gift" onclick="final()">
+    <p><b>Happy New Year 💫</b></p>
+    <p><b>Click on the gift box 💫</b></p>
+</div>
+
+<!-- FINAL LETTER -->
+<div class="screen" id="s7">
+    <div class="letter-card">
+        <h2>💖 A Letter for You 💖</h2>
+        <p>
+            As 2025 comes to an end, thank you for being part of these memories.
+            Every laugh, every moment, every journey meant a lot.<br><br>
+            May 2026 bring happiness, good health, success, and peace.
+            Never stop believing in yourself.<br><br>
+            Happy New Year 🎆
+        </p>
+        <div class="signature">— FROM HARSH</div>
+    </div>
+</div>
+
+</div>
+
+<script>
+/* SCREEN CONTROL */
+function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+function yesClick(){go('s2')}
+function noClick(){
+    go('howDare');
+    setTimeout(()=>go('s1'),2000);
+}
+function final(){
+    go('s7');
+    startFireworks();
+}
+
+/* HEARTS */
+const heartBox=document.querySelector(".hearts");
+for(let i=0;i<30;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDelay=Math.random()*10+"s";
+    h.style.animationDuration=8+Math.random()*6+"s";
+    heartBox.appendChild(h);
+}
+
+/* FIREWORKS */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+let parts=[];
+
+function resize(){
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
+}
+resize(); window.onresize=resize;
+
+function boom(){
+    let x=Math.random()*canvas.width;
+    let y=Math.random()*canvas.height/2;
+    let colors=["#ff5f9e","#ffd1dc","#ff8fab"];
+    for(let i=0;i<40;i++){
+        parts.push({
+            x,y,
+            vx:(Math.random()-.5)*6,
+            vy:(Math.random()-.5)*6,
+            life:60,
+            c:colors[Math.floor(Math.random()*colors.length)]
+        });
+    }
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    parts.forEach((p,i)=>{
+        p.x+=p.vx;
+        p.y+=p.vy;
+        p.life--;
+        ctx.fillStyle=p.c;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2.5,0,Math.PI*2);
+        ctx.fill();
+        if(p.life<=0) parts.splice(i,1);
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+
+function startFireworks(){
+    canvas.style.display="block";
+    setInterval(boom,900);
+}
+</script>
+
+</body>
+</html>
